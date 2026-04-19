@@ -1,0 +1,28 @@
+﻿@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'bootstrap-icons/font/bootstrap-icons.css';
+
+:root {
+  --ha-bg:        #0d1117;
+  --ha-surface:   #161b22;
+  --ha-border:    #30363d;
+  --ha-text:      #e6edf3;
+  --ha-text-muted:#8b949e;
+  --ha-red:       #da3633;
+  --ha-teal:      #2ea8a0;
+  --ha-teal-glow: rgba(46,168,160,0.15);
+  --ha-user-bg:   #1c2a3a;
+  --ha-bot-bg:    #161b22;
+  --ha-danger-bg: rgba(218,54,51,0.12);
+  --ha-danger-border: rgba(218,54,51,0.5);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--ha-bg);
+  color: var(--ha-text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+}

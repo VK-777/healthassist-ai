@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: healthassist-ai
+
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3.2
+      embedding:
+        options:
+          model: mxbai-embed-large
+    vectorstore:
+      mariadb:
+        similarity-threshold: 0.5
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/healthassist
+    username: root
+    password: root
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+logging:
+  level:
+    org.springframework.ai: DEBUG
+    com.healthassist: DEBUG
+
+healthassist:
+  ingestion:
+    chunk-size: 200
+    chunk-overlap: 40
+    force-reingest: false
+  retrieval:
+    top-k: 5
+    similarity-threshold: 0.5
+
+

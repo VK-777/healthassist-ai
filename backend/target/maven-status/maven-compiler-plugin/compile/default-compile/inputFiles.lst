@@ -1,0 +1,17 @@
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\config\AiConfig.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\config\WebFluxConfig.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\controller\AuditController.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\controller\ChatController.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\exception\GlobalExceptionHandler.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\filter\DynamicMetadataFilter.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\HealthAssistApplication.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\model\AuditLog.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\model\ChatRequest.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\model\ChatResponse.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\repository\AuditLogRepository.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\service\AuditService.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\service\ChatService.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\service\HealthcareDocumentCompressor.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\service\HealthcareDocumentReranker.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\service\IngestionService.java
+C:\Users\vedant.kumar01\Desktop\CapstoneAI\backend-2\src\main\java\com\healthassist\util\DisclaimerUtil.java

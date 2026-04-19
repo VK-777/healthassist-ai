@@ -1,0 +1,223 @@
+<div class="app-shell d-flex flex-column vh-100">
+
+  <!-- Top Navigation Bar -->
+  <nav class="navbar navbar-dark px-3 py-2 border-bottom border-secondary flex-shrink-0" style="background:#0d1117;">
+    <div class="d-flex align-items-center gap-2">
+      <div class="brand-icon d-flex align-items-center justify-content-center rounded-2 me-1">
+        <i class="bi bi-heart-pulse-fill text-danger fs-5"></i>
+      </div>
+      <span class="fw-bold fs-5 text-white letter-spacing-1">HealthAssist <span class="text-accent">AI</span></span>
+      <span class="badge bg-danger ms-2 fw-normal" style="font-size:0.6rem;letter-spacing:1px;">MEDICAL</span>
+    </div>
+    <div class="d-flex align-items-center gap-3">
+      <div class="session-pill d-flex align-items-center gap-2 px-3 py-1 rounded-pill border border-secondary">
+        <i class="bi bi-person-circle text-secondary" style="font-size:0.75rem;"></i>
+        <span class="text-secondary font-monospace" style="font-size:0.7rem;">{{ sessionId }}</span>
+      </div>
+      <button class="btn btn-sm btn-outline-secondary border-0" (click)="clearChat()" title="New session">
+        <i class="bi bi-plus-lg"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Emergency Banner -->
+  <div class="emergency-banner text-center py-1 flex-shrink-0" style="background:linear-gradient(90deg,#7f1d1d,#991b1b,#7f1d1d);font-size:0.7rem;letter-spacing:1.5px;">
+    <i class="bi bi-exclamation-triangle-fill text-red-300 me-1"></i>
+    <span class="text-red-200 fw-semibold">FOR LIFE-THREATENING EMERGENCIES CALL 112 (Emergency) / 108 (Ambulance) IMMEDIATELY</span>
+    <i class="bi bi-exclamation-triangle-fill text-red-300 ms-1"></i>
+  </div>
+
+  <!-- Main Layout -->
+  <div class="flex-grow-1 d-flex overflow-hidden">
+
+    <!-- Chat Area -->
+    <div class="chat-area flex-grow-1 d-flex flex-column overflow-hidden">
+
+      <!-- Messages -->
+      <div class="messages-container flex-grow-1 overflow-y-auto px-3 py-4">
+        <div class="messages-inner mx-auto">
+
+          <div *ngFor="let msg of messages" class="message-row mb-4"
+               [class.user-row]="msg.role === 'user'"
+               [class.assistant-row]="msg.role === 'assistant'">
+
+            <!-- User Message -->
+            <div *ngIf="msg.role === 'user'" class="d-flex justify-content-end">
+              <div class="user-bubble px-4 py-3 rounded-3 position-relative"
+                   [class.high-risk-bubble]="msg.isHighRisk">
+                <div *ngIf="msg.isHighRisk" class="high-risk-tag mb-1">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i>HIGH RISK QUERY
+                </div>
+                <p class="mb-0 text-white" style="white-space:pre-wrap;">{{ msg.content }}</p>
+                <div class="msg-time text-end mt-1">{{ msg.timestamp | date:'HH:mm' }}</div>
+              </div>
+            </div>
+
+            <!-- Assistant Message -->
+            <div *ngIf="msg.role === 'assistant'" class="d-flex justify-content-start gap-2">
+              <div class="assistant-avatar flex-shrink-0 d-flex align-items-start pt-1">
+                <div class="avatar-icon rounded-circle d-flex align-items-center justify-content-center"
+                     [class.emergency-avatar]="msg.isHighRisk">
+                  <i class="bi" [class]="msg.isHighRisk ? 'bi-heart-pulse-fill text-danger' : 'bi-robot text-accent'"></i>
+                </div>
+              </div>
+              <div class="flex-grow-1">
+
+                <!-- Loading State -->
+                <div *ngIf="msg.isLoading" class="assistant-bubble loading-bubble px-4 py-3 rounded-3">
+                  <div class="typing-indicator d-flex align-items-center gap-2">
+                    <span class="text-secondary" style="font-size:0.8rem;">HealthAssist is thinking</span>
+                    <div class="dots d-flex gap-1">
+                      <div class="dot"></div>
+                      <div class="dot"></div>
+                      <div class="dot"></div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Response Content -->
+                <div *ngIf="!msg.isLoading" class="assistant-bubble px-4 py-3 rounded-3"
+                     [class.emergency-bubble]="msg.isHighRisk">
+
+                  <!-- Emergency Header -->
+                  <div *ngIf="msg.isHighRisk" class="emergency-header d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-danger">
+                    <i class="bi bi-exclamation-octagon-fill text-danger fs-5"></i>
+                    <span class="text-danger fw-bold" style="letter-spacing:1px;">EMERGENCY ESCALATION</span>
+                  </div>
+
+                  <div class="message-content text-light" [innerHTML]="formatContent(msg.content)"></div>
+
+                  <!-- Citations -->
+                  <div *ngIf="msg.citations && msg.citations.length > 0" class="citations mt-3 pt-2 border-top border-secondary">
+                    <div class="d-flex align-items-center gap-1 mb-2">
+                      <i class="bi bi-journal-text text-secondary" style="font-size:0.75rem;"></i>
+                      <span class="text-secondary" style="font-size:0.72rem;letter-spacing:0.5px;">SOURCES</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                      <span *ngFor="let cite of msg.citations"
+                            class="citation-chip px-2 py-1 rounded-2 text-secondary"
+                            style="font-size:0.68rem;">
+                        <i class="bi bi-file-earmark-text me-1"></i>{{ cite }}
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Footer: time + audit link -->
+                  <div class="d-flex align-items-center justify-content-between mt-2">
+                    <div class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</div>
+                    <button *ngIf="msg.workflowId"
+                            class="btn-audit d-flex align-items-center gap-1"
+                            (click)="openAuditPanel(msg.workflowId!)">
+                      <i class="bi bi-activity"></i>
+                      <span>View Pipeline Trace</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Error -->
+          <div *ngIf="errorMessage" class="alert alert-danger d-flex align-items-center gap-2 rounded-3 border-0" style="background:#2d1515;">
+            <i class="bi bi-exclamation-circle-fill text-danger"></i>
+            <span style="font-size:0.85rem;">{{ errorMessage }}</span>
+            <button class="btn-close btn-close-white ms-auto" style="font-size:0.6rem;" (click)="errorMessage=''"></button>
+          </div>
+
+          <div #messagesEnd></div>
+        </div>
+      </div>
+
+      <!-- Input Area -->
+      <div class="input-area flex-shrink-0 px-3 pb-3 pt-2" style="background:#0d1117;border-top:1px solid #21262d;">
+        <div class="input-inner mx-auto">
+          <div class="input-wrapper d-flex align-items-end gap-2 rounded-3 px-3 py-2">
+            <button class="btn rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                    [class.btn-outline-info]="isStreamingMode"
+                    [class.btn-outline-secondary]="!isStreamingMode"
+                    (click)="toggleStreamingMode()"
+                    [title]="isStreamingMode ? 'Streaming mode (async)' : 'Standard mode (sync)'"
+                    style="width:36px;height:36px;font-size:0.75rem;">
+              <i class="bi" [class]="isStreamingMode ? 'bi-broadcast' : 'bi-lightning-fill'"></i>
+            </button>
+            <textarea #inputField
+              class="form-control bg-transparent border-0 text-white flex-grow-1 p-0"
+              placeholder="Ask about hospital services, symptoms, insurance, appointments..."
+              rows="1"
+              [(ngModel)]="inputText"
+              (keydown)="onKeyDown($event)"
+              [disabled]="isLoading"
+              style="resize:none;outline:none;box-shadow:none;font-size:0.9rem;max-height:120px;overflow-y:auto;">
+            </textarea>
+            <button class="send-btn btn rounded-2 d-flex align-items-center justify-content-center flex-shrink-0"
+                    (click)="sendMessage()"
+                    [disabled]="!inputText.trim() || isLoading">
+              <span *ngIf="!isLoading"><i class="bi bi-send-fill"></i></span>
+              <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status"></span>
+            </button>
+          </div>
+          <div class="d-flex justify-content-center mt-2">
+            <span class="text-secondary" style="font-size:0.65rem;letter-spacing:0.5px;">
+              <i class="bi bi-shield-check me-1 text-success"></i>
+              Responses are grounded in verified hospital knowledge base · Not a substitute for professional medical advice
+              · Mode: <span [class.text-info]="isStreamingMode">{{ isStreamingMode ? 'Streaming (async)' : 'Standard (sync)' }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Audit Side Panel -->
+    <div class="audit-panel border-start border-secondary d-flex flex-column"
+         [class.audit-panel-open]="showAuditPanel">
+      <div class="audit-header px-4 py-3 d-flex align-items-center justify-content-between border-bottom border-secondary flex-shrink-0">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-activity text-accent"></i>
+          <span class="fw-semibold text-white" style="font-size:0.9rem;">Pipeline Trace</span>
+        </div>
+        <button class="btn btn-sm btn-outline-secondary border-0 rounded-circle" (click)="closeAuditPanel()">
+          <i class="bi bi-x-lg" style="font-size:0.8rem;"></i>
+        </button>
+      </div>
+
+      <div class="p-3 overflow-y-auto flex-grow-1">
+        <div *ngIf="selectedWorkflowId" class="mb-3">
+          <span class="text-secondary" style="font-size:0.65rem;letter-spacing:0.5px;">WORKFLOW ID</span>
+          <div class="font-monospace text-info" style="font-size:0.68rem;word-break:break-all;">{{ selectedWorkflowId }}</div>
+        </div>
+
+        <div *ngIf="auditLoading" class="text-center py-4">
+          <div class="spinner-border spinner-border-sm text-secondary" role="status"></div>
+          <div class="text-secondary mt-2" style="font-size:0.8rem;">Loading trace...</div>
+        </div>
+
+        <div *ngIf="!auditLoading && auditTrail">
+          <div class="pipeline-stages">
+            <div *ngFor="let stage of auditTrail.stages; let i = index" class="stage-item mb-3">
+              <div class="d-flex align-items-start gap-3">
+                <div class="stage-connector d-flex flex-column align-items-center flex-shrink-0">
+                  <div class="stage-dot rounded-circle d-flex align-items-center justify-content-center" [class]="getStageColor(stage.stage)">
+                    <i class="bi" [class]="getStageIcon(stage.stage)" style="font-size:0.7rem;"></i>
+                  </div>
+                  <div *ngIf="i < auditTrail!.stages.length - 1" class="stage-line"></div>
+                </div>
+                <div class="stage-content flex-grow-1 pb-1">
+                  <div class="d-flex align-items-center justify-content-between mb-1">
+                    <span class="fw-semibold text-white" style="font-size:0.78rem;">{{ stage.stage }}</span>
+                    <span class="text-secondary font-monospace" style="font-size:0.65rem;">{{ formatTimestamp(stage.timestamp) }}</span>
+                  </div>
+                  <div class="stage-details rounded-2 p-2" style="background:#161b22;">
+                    <pre class="text-secondary mb-0" style="font-size:0.65rem;white-space:pre-wrap;word-break:break-all;">{{ stage.details }}</pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

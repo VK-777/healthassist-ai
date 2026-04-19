@@ -54,6 +54,9 @@ healthassist-ai/
 ├── frontend/
 ├── knowledge-base/
 ├── docs/
+├── ARCHITECTURE.md
+├── LICENSE
+├── PROMPT.md
 ├── README.md
 └── .gitignore
 ```
